@@ -1,0 +1,463 @@
+«EXTENSION org::fornax::cartridges::uml2::javabasic::m2t::Helper»
+«EXTENSION org::fornax::cartridges::uml2::javabasic::m2t::Names»
+«EXTENSION org::fornax::cartridges::uml2::javabasic::m2t::DataType»
+«EXTENSION org::fornax::cartridges::uml2::javabasic::m2t::Properties»
+«EXTENSION ext::counter»
+«EXTENSION ext::globalvar»
+«EXTENSION ext::byte_object»
+«EXTENSION ext::Properties»
+
+«AROUND org::fornax::cartridges::uml2::javabasic::m2t::Class::class FOR uml::Class»
+	«IF isEntity(this)»
+		«EXPAND Entity::entityInterface»
+		«EXPAND Entity::entityAbstractClass»
+		«EXPAND Entity::entityBasicClass»
+	«ELSEIF isException()»
+		«EXPAND org::fornax::cartridges::uml2::javabasic::m2t::Exception::exception(false)»
+	«ELSE»
+		«FILE getFQNPackagePath()+"/"+name+".java"»
+			«EXPAND classContentSimple FOR this»
+		«ENDFILE»
+		«FILE getFQNPackagePath()+"/metadata/"+name+"MetaData.java"»
+			«EXPAND classContentSimpleMetaData FOR this»
+		«ENDFILE»
+	«ENDIF»
+«ENDAROUND»
+
+«DEFINE classContentSimple FOR uml::Class»
+	«getTypeHeader()»
+
+
+    /*MIT License
+    *
+    *Copyright (c) 2013-present, , GmbH.
+    *
+    *Permission is hereby granted, free of charge, to any person obtaining a copy
+    *of this software and associated documentation files (the "Software"), to deal
+    *in the Software without restriction, including without limitation the rights
+    *to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    *copies of the Software, and to permit persons to whom the Software is
+    *furnished to do so, subject to the following conditions:
+    *
+    *The above copyright notice and this permission notice shall be included in all
+    *copies or substantial portions of the Software.
+    *
+    *THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    *IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    *FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    *AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    *LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    *OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    *SOFTWARE.
+    */
+	
+	«EXPAND org::fornax::cartridges::uml2::javabasic::m2t::Class::package FOR this»
+
+	import org.salgar.byte_object.metadata.*;
+	import «getFQNPackageName()».metadata.«name»MetaData;
+	import org.salgar.byte_object.metadata.AbstractMetaData;
+	import static org.salgar.byte_object.metadata.AbstractMetaData.*;
+	
+	«EXPAND org::fornax::cartridges::uml2::javabasic::m2t::Documentation::documentation»
+	«EXPAND org::fornax::cartridges::uml2::javabasic::m2t::Class::classAnnotations»
+	public «IF isAbstract»abstract«ENDIF» class «name»
+		«EXPAND org::fornax::cartridges::uml2::javabasic::m2t::Generalization::generalization»
+		«EXPAND org::fornax::cartridges::uml2::javabasic::m2t::Realization::realization»{
+		«EXPAND org::fornax::cartridges::uml2::javabasic::m2t::SerialVersionUID::serialVersionUIDField»
+		«IF versionEnabled()»
+            //https://semver.org/
+            private static final String MODEL_VERSION = "«modelVersion()»";
+        «ENDIF»
+		volatile byte[] data = null;
+		«REM»
+		«EXPAND org::fornax::cartridges::uml2::javabasic::m2t::Association::attribute»
+		«ENDREM»
+		«EXPAND template::advice::byte_object_association_advices::attribute»
+		«EXPAND org::fornax::cartridges::uml2::javabasic::m2t::Attribute::staticAttribute»
+		
+		public «name»() {
+			this.data = new byte[«name»MetaData.INITIAL_SIZE];
+			
+			«EXPAND initializeConstructors»
+		}
+
+        public «name»(byte[] serialized«name») {
+            this.data = serialized«name»;
+        }
+
+        «IF versionEnabled()»
+		    public «name»(byte[] serialized«name», boolean version) {
+                if(!AbstractMetaData.verifyVersion(MODEL_VERSION, serialized«name»)){
+                    throw new UnsupportedOperationException("Version supplied in serialized byte array does not compatible with model version");
+                }
+                byte[] realData = new byte[serialized«name».length - 12];
+                System.arraycopy(serialized«name», 12, realData, 0, serialized«name».length - 12);
+
+                this.data = realData;
+		    }
+		«ENDIF»
+
+		«EXPAND template::advice::byte_object_attribute_advices::getterSetter»
+		«EXPAND org::fornax::cartridges::uml2::javabasic::m2t::Operation::operation»	
+		«EXPAND org::fornax::cartridges::uml2::javabasic::m2t::Generalization::operation»
+		«REM»
+		«EXPAND org::fornax::cartridges::uml2::javabasic::m2t::Association::accessors»
+		«ENDREM»
+		«EXPAND template::advice::byte_object_association_advices::accessors»
+
+		«IF versionEnabled()»
+		    public byte[] toByteWithVersion() {
+        		return AbstractMetaData.placeVersion(MODEL_VERSION, toByte());
+        	}
+        «ENDIF»
+		
+		public byte[] toByte() {
+			«EXPAND template::advice::byte_object_association_advices::collectionsForSerialisation»
+			return this.data;
+		}
+
+        «IF versionEnabled() && streamImplementation()»
+            public void toByteWithVersion(java.io.OutputStream outputStream) throws java.io.IOException {
+                outputStream.write(placeVersion(MODEL_VERSION));
+                toByte(outputStream);
+            }
+        «ENDIF»
+
+        «IF streamImplementation()»
+            public void toByte(java.io.OutputStream outputStream) throws java.io.IOException {
+                int lazy = -999999;
+                for(int i =0, n = «name»MetaData.fieldOrder.size(), limit = n - 1; i < n; i++) {
+                    FieldMetaData<«name»MetaData.«name»Fields> fieldMetaData = «name»MetaData.fieldOrder.get(i);
+
+                    if(fieldMetaData.getOffsetStrategy() == null) {
+                        if(i < limit){
+                            lazy = «name»MetaData.fieldOrder.get(i + 1).getOffset();
+                            //outputStream.write(this.data, fieldMetaData.getOffset(),
+                            //        «name»MetaData.fieldOrder.get(i + 1).getOffset() - fieldMetaData.getOffset());
+                        } else {
+                            outputStream.write(this.data, 0, «name»MetaData.INITIAL_SIZE );
+                        }
+                    } else if(fieldMetaData.isAssociation() == true) {
+                        if(lazy != -999999) {
+                            outputStream.write(this.data, 0, lazy);
+                            lazy = -999999;
+                        }
+                        processField(fieldMetaData.getField(), outputStream);
+                    } else if(fieldMetaData.getOffset() == - 1 && fieldMetaData.getOffsetStrategy() instanceof ObjectOffsetStrategy) {
+                        int offset = AbstractMetaData.searchOffset(fieldMetaData.getLink(), this.data);
+                        outputStream.write(this.data, offset, AbstractMetaData.intFromByte(offset, this.data) + 4);
+                    } else if(fieldMetaData.getOffsetStrategy() instanceof ObjectOffsetStrategy) {
+                        //outputStream.write(this.data, fieldMetaData.getOffset(), AbstractMetaData.intFromByte(fieldMetaData.getOffset(), this.data) + 4);
+                        outputStream.write(this.data, 0, fieldMetaData.getOffset() + AbstractMetaData.intFromByte(fieldMetaData.getOffset(), this.data) + 4);
+                        lazy = -999999;
+                    }
+                }
+                outputStream.flush();
+            }
+
+            private void processField(«name»MetaData.«name»Fields field, java.io.OutputStream outputStream) throws java.io.IOException {
+                «EXPAND template::advice::byte_object_association_advices::collectionsForStreamSerialisation»
+            }
+        «ENDIF»
+
+        «IF streamImplementation() || byteBufferImplementation()»
+            public int calculateLength() {
+                int length = 0;
+                for (int i = 0, n = «name»MetaData.fieldOrder.size(), limit = n - 1; i < n; i++) {
+                    FieldMetaData<«name»MetaData.«name»Fields> fieldMetaData = «name»MetaData.fieldOrder.get(i);
+                    if (fieldMetaData.getOffsetStrategy() == null) {
+                        if(i < limit) {
+                            length += «name»MetaData.fieldOrder.get(i + 1).getOffset() - fieldMetaData.getOffset();
+                        } else {
+                            length += «name»MetaData.INITIAL_SIZE - fieldMetaData.getOffset();
+                        }
+                    } else if(fieldMetaData.isAssociation() == false) {
+                        length += AbstractMetaData.intFromByte(length, this.data) + 4;
+                    } else if(fieldMetaData.getOffsetStrategy() != null) {
+                        length += calculateFieldLength(fieldMetaData.getField());
+                    }
+                }
+
+                return length;
+            }
+
+            private int calculateFieldLength(«name»MetaData.«name»Fields field) {
+                «EXPAND template::advice::byte_object_association_advices::collectionsForStreamLength»
+                return 0;
+            }
+        «ENDIF»
+
+        «IF byteBufferImplementation()»
+            public java.nio.ByteBuffer toByteBuffer() {
+                java.nio.ByteBuffer byteBuffer = java.nio.ByteBuffer.allocate(calculateLength() «IF versionEnabled()» + 12«ENDIF»).order(java.nio.ByteOrder.LITTLE_ENDIAN);
+                «IF versionEnabled()»
+                    byteBuffer.put(placeVersion(MODEL_VERSION));
+                «ENDIF»
+                toByte(byteBuffer);
+
+                return byteBuffer;
+            }
+
+            «IF versionEnabled()»
+                public void toByteWithVersion(java.nio.ByteBuffer byteBuffer) {
+            		byteBuffer.put(placeVersion(MODEL_VERSION));
+            	}
+            «ENDIF»
+
+            public void toByte(java.nio.ByteBuffer byteBuffer) {
+                int lazy = -999999;
+                for(int i =0, n = «name»MetaData.fieldOrder.size(), limit = n - 1; i < n; i++) {
+                    FieldMetaData<«name»MetaData.«name»Fields> fieldMetaData = «name»MetaData.fieldOrder.get(i);
+
+                    if(fieldMetaData.getOffsetStrategy() == null) {
+                        if(i < limit){
+                           lazy = «name»MetaData.fieldOrder.get(i + 1).getOffset();
+                           //byteBuffer.put(this.data, fieldMetaData.getOffset(),
+                           //         «name»MetaData.fieldOrder.get(i + 1).getOffset() - fieldMetaData.getOffset());
+                        } else {
+                            byteBuffer.put(this.data, 0, «name»MetaData.INITIAL_SIZE);
+                        }
+                    } else if(fieldMetaData.isAssociation() == true) {
+                        if(lazy != -999999) {
+                            byteBuffer.put(this.data, 0, 	lazy);
+                            lazy = -999999;
+                        }
+                        processField(fieldMetaData.getField(), byteBuffer);
+                    } else if(fieldMetaData.getOffset() == - 1 && fieldMetaData.getOffsetStrategy() instanceof ObjectOffsetStrategy) {
+                        int offset = AbstractMetaData.searchOffset(fieldMetaData.getLink(), this.data);
+                        byteBuffer.put(this.data, offset, AbstractMetaData.intFromByte(offset, this.data) + 4);
+                    } else if(fieldMetaData.getOffsetStrategy() instanceof ObjectOffsetStrategy) {
+                        //byteBuffer.put(this.data, fieldMetaData.getOffset(), AbstractMetaData.intFromByte(fieldMetaData.getOffset(), this.data) + 4);
+                        byteBuffer.put(this.data, 0, fieldMetaData.getOffset() + AbstractMetaData.intFromByte(fieldMetaData.getOffset(), this.data) + 4);
+                        lazy = -999999;
+                    }
+                }
+            }
+
+            private void processField(«name»MetaData.«name»Fields field, java.nio.ByteBuffer byteBuffer) {
+                «EXPAND template::advice::byte_object_association_advices::collectionsForByteBufferSerialisation»
+            }
+        «ENDIF»
+
+		«EXPAND template::advice::byte_object_association_advices::serialisations»
+        public void setData(byte[] data) {
+		    this.data = data;
+		}
+    }
+		
+	«getTypeFooter()»
+«ENDDEFINE»
+
+«DEFINE initializeConstructors FOR uml::Class»
+	«IF byteObjectNullImplementation()»
+		«EXPAND initializeNullConstructorFields(this) FOREACH AllAttributes().typeSelect(uml::Property).select(a|!a.isStatic && VisibilityName(a) != "private")»
+	«ENDIF»
+	«EXPAND initializeConstructorFields(this) FOREACH AllAttributes().typeSelect(uml::Property).select(a|!a.isStatic && a.association==null && "java.lang.String"==a.type.fqName() && VisibilityName(a) != "private")»
+	«EXPAND initializeConstructorFields(this) FOREACH AllAttributes().typeSelect(uml::Property).select(a|a.getUpper()==-1 && VisibilityName(a) != "private")»
+«ENDDEFINE»
+
+«DEFINE initializeConstructorFields(uml::Class clazz) FOR uml::Property»
+	int2Byte(0, «clazz.name»MetaData.offsetMap.get(«clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()»), this.data);
+«ENDDEFINE»
+
+«DEFINE initializeNullConstructorFields(uml::Class clazz) FOR uml::Property»
+	boolean2Byte(true, «clazz.name»MetaData.getOffset(«clazz.name»MetaData.«clazz.name»Fields.NULL_«name.toUpperCase()»), this.data);
+«ENDDEFINE»
+
+«DEFINE classContentSimpleMetaData FOR uml::Class»
+	«getTypeHeader()»
+
+    /*MIT License
+    *
+    *Copyright (c) 2013-present, , GmbH.
+    *
+    *Permission is hereby granted, free of charge, to any person obtaining a copy
+    *of this software and associated documentation files (the "Software"), to deal
+    *in the Software without restriction, including without limitation the rights
+    *to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    *copies of the Software, and to permit persons to whom the Software is
+    *furnished to do so, subject to the following conditions:
+    *
+    *The above copyright notice and this permission notice shall be included in all
+    *copies or substantial portions of the Software.
+    *
+    *THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    *IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    *FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    *AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    *LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    *OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    *SOFTWARE.
+    */
+	
+	«EXPAND packageMetadata FOR this»
+	
+	import java.util.*;
+	
+	import org.salgar.byte_object.metadata.*;
+	import static org.salgar.byte_object.metadata.AbstractMetaData.*;
+	
+	public «IF isAbstract»abstract«ENDIF» class «name»MetaData {
+		public static List<FieldMetaData<«name»Fields>> fieldOrder = null;
+		public final static Map<«name»Fields, Integer> offsetMap = new HashMap<«name»Fields, Integer>();
+		public final static int INITIAL_SIZE;
+			
+		static {
+	        fieldOrder = new ArrayList<FieldMetaData<«name»Fields>>();
+	        «IF byteObjectNullImplementation()»
+	        	 «EXPAND template::advice::byte_object_attribute_advices::fieldNullDefinitions(this)»
+	        «ENDIF»
+	        «EXPAND template::advice::byte_object_attribute_advices::fieldDefinitions(this)»
+	    }
+	    
+	    private «name»MetaData() {
+		}
+	    
+	    public enum «name»Fields {
+	    	«EXPAND template::advice::byte_object_attribute_advices::attributeEnumeration»		       
+	    }
+	    
+	    public static int getOffset(«name»Fields field) {
+	        for(int i = 0, n = fieldOrder.size(); i < n; i++) {
+            	FieldMetaData<«name»Fields> fmd = fieldOrder.get(i);
+	            if(fmd.getField().equals(field)) {
+	                return fmd.getOffset();
+	            }
+	        }
+	        return -9999999;
+	    }
+	
+	    public static FieldMetaData<«name»Fields> getLink(«name»Fields field) {
+	        for (FieldMetaData<«name»Fields> fmd : fieldOrder) {
+	            if(fmd.getField().equals(field)) {
+	                return fmd.getLink();
+	            }
+	        }
+	        return null;
+	    }
+	    
+	    public static String getString(«name»Fields field, byte[] data) {
+			return new String(getObject(field, data, false).getObject());
+		}
+	
+		public static byte[] setString(String payload, «name»Fields field, byte[] data) {
+			return setObject(AbstractMetaData.getByte(payload), field, data);
+		}
+	
+	    public static «name»_Object getObject(«name»Fields field, byte[] data, boolean removeReadBytes) {
+	        int offset = getOffset(field);
+	
+	        if (offset == -1) {
+	            FieldMetaData<«name»Fields> fmd = getLink(field);
+	            if (fmd != null) {
+	                offset = searchOffset(fmd, data);
+	            }
+	        }
+	
+	        int length = intFromByte(offset, data);
+
+	        int restLength = offset + 4;
+	        int totalLength = restLength + length;
+	        byte[] tmp = Arrays.copyOfRange(data, restLength, totalLength);
+	        «name»_Object «name.toLowerCase()»_Object = null;
+			if(removeReadBytes) {
+				java.nio.ByteBuffer buffer = java.nio.ByteBuffer.allocate((data.length - tmp.length));
+				buffer.put(data, 0, restLength);
+				if(totalLength < data.length) {
+					buffer.put(data, totalLength, data.length - totalLength);
+				}
+				byte[] data_transfer = buffer.array();
+				int2Byte(0, offset, data_transfer);
+				«name.toLowerCase()»_Object = new «name»_Object(tmp, data_transfer);
+			} else {
+				«name.toLowerCase()»_Object = new «name»_Object(tmp, null);
+			}
+
+			return «name.toLowerCase()»_Object;
+	    }
+	
+	    public static byte[] setObject(byte[] bytes, «name»Fields field, byte[] data) {
+	        int offset = getOffset(field);
+	        if (offset == -1) {
+	            FieldMetaData<«name»Fields> fmd = getLink(field);
+	            if (fmd != null) {
+	                offset = searchOffset(fmd, data);
+	            }
+	        }
+	
+	        return AbstractMetaData.setObject(data, offset, bytes);
+	    }
+
+	    public static byte[] add(java.util.List<byte[]> bytes, int totalLength, byte[] data, «name»Fields field) {
+            int offset = getOffset(field);
+            if (offset == -1) {
+                FieldMetaData<«name»Fields> fmd = «name»MetaData.getLink(field);
+                if (fmd != null) {
+                    offset = searchOffset(fmd, data);
+                }
+            }
+
+            return AbstractMetaData.add(data, offset, bytes, totalLength);
+        }
+
+        public static byte[] addMap(java.util.List<org.salgar.byte_object.metadata.MapKeyValueByte> mapKeyValues, int totallength, byte[] data, «name»Fields field) {
+            int offset = getOffset(field);
+            if(offset == -1) {
+                FieldMetaData<«name»Fields> fmd = «name»MetaData.getLink(field);
+                if (fmd != null) {
+                    offset = searchOffset(fmd, data);
+                }
+
+            }
+
+            //TODO what if we get an object that we can't call toBytes(), like a String
+            return AbstractMetaData.addMap(data, offset, mapKeyValues, totallength);
+        }
+	    
+	    «EXPAND template::advice::byte_object_attribute_collection_advices::accessorForCollections(this) FOREACH AllAttributes().typeSelect(uml::Property).select(a|a.getUpper()==-1 && getMapKey(a) == null)»
+	    «EXPAND template::advice::byte_object_attribute_map_advices::accessorForMap(this) FOREACH AllAttributes().typeSelect(uml::Property).select(a|a.getUpper()==-1 && getMapKey(a) != null)»
+	    
+	    «EXPAND template::advice::byte_object_attribute_collection_advices::internalReturnTypeForCollections(this) FOREACH AllAttributes().typeSelect(uml::Property).select(a|a.association != null && a.getUpper()==-1 && getMapKey(a) == null)»
+	    «EXPAND template::advice::byte_object_attribute_map_advices::internalReturnTypeForMap(this) FOREACH AllAttributes().typeSelect(uml::Property).select(a|a.association != null && a.getUpper()==-1 && getMapKey(a) != null)»
+	    
+	    public static class «name»_Object {
+			private byte[] object;
+			private byte[] data;
+		
+			public «name»_Object(byte[] object, byte[] data) {
+				this.object = object;
+				this.data = data;
+			}
+			public byte[] getObject() {
+				return object;
+			}
+		
+			public byte[] getData() {
+				return data;
+			}
+		} 	    	
+	}
+«ENDDEFINE»
+
+«DEFINE internalReturnTypeForObject(uml::Class clazz) FOR uml::Property»
+	public static class «clazz.name»_«name.toFirstUpper()» {
+		private byte[] object;
+		private byte[] data;
+		
+		public «clazz.name»_«name.toFirstUpper()»(byte[] object, byte[] data) {
+			this.object = object;
+			this.data = data;
+		}
+		public byte[] getObject() {
+			return object;
+		}
+		
+		public byte[] getData() {
+			return data;
+		}
+	}
+«ENDDEFINE»
+
+«DEFINE packageMetadata FOR uml::Class»
+       package «getFQNPackageName()».metadata;
+«ENDDEFINE»

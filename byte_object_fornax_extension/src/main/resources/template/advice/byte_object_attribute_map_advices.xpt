@@ -1,0 +1,99 @@
+«EXTENSION org::fornax::cartridges::uml2::javabasic::m2t::Helper»
+«EXTENSION org::fornax::cartridges::uml2::javabasic::m2t::Names»
+«EXTENSION org::fornax::cartridges::uml2::javabasic::m2t::DataType»
+«EXTENSION org::fornax::cartridges::uml2::javabasic::m2t::Properties»
+«EXTENSION ext::counter»
+«EXTENSION ext::globalvar»
+«EXTENSION ext::byte_object»
+«EXTENSION ext::Properties»
+
+«DEFINE accessorForMap(uml::Class clazz) FOR uml::Property»
+    public static byte[] getByte(«type.fqName()» «name.toLowerCase()») {
+		return «name.toLowerCase()».toByte();
+	}
+
+    public static «clazz.name»_«name.toFirstUpper()»_Map «toGetter()»(byte[] data, «clazz.name»Fields field) {
+        //TODO - check what happens when there is two association to a same class
+        java.util.Map<«getMapKey(this).type.name», «type.fqName()»> result = null;
+        «clazz.name»_«name.toFirstUpper()»_Map container = new «clazz.name»_«name.toFirstUpper()»_Map(result, data);
+
+        int offset = getOffset(field);
+        if(offset == -1) {
+            FieldMetaData<«clazz.name»Fields> fmd = «clazz.name»MetaData.getLink(field);
+            if (fmd != null) {
+                offset = searchOffset(fmd, data);
+            }
+        }
+
+        int count = intFromByte(offset, data);
+		if (count != 0) {
+		    result = new java.util.HashMap<«getMapKey(this).type.name», «type.fqName()»>(count, 1.0f);
+			final java.nio.ByteBuffer buffer = java.nio.ByteBuffer.allocate(data.length);
+
+			buffer.put(data);
+
+			int i = 0;
+			int offset_length = 4;
+			while (i < count) {
+				int key_length = intFromByte(offset + offset_length, data);
+
+				byte[] key_byte = new byte[key_length];
+				offset_length += 4;
+				buffer.position(offset + offset_length);
+				buffer.get(key_byte, 0, key_length);
+				«getMapKey(this).type.name» key = AbstractMetaData.setByte(new «getMapKey(this).type.name»(), key_byte);
+							
+				«type.fqName()» «type.name.toLowerCase()» = new «type.fqName()»();
+				offset_length += key_length;
+				int object_length = intFromByte(offset + offset_length, data);				
+				byte[] object_byte = new byte[object_length];
+				offset_length += 4;
+				buffer.position(offset + offset_length);
+				buffer.get(object_byte, 0, object_length);
+				offset_length += object_length;
+				result.put(key, setByte(«type.name.toLowerCase()», object_byte));
+				i++;
+			}
+
+			java.nio.ByteBuffer tempBuffer = java.nio.ByteBuffer.allocate(data.length - (offset_length - 4));
+			tempBuffer.put(data, 0, (offset + 4));
+			int totalOffsetLength = offset + offset_length;
+			if (totalOffsetLength < data.length) {
+				tempBuffer.put(data, totalOffsetLength, data.length - totalOffsetLength);
+			}
+			byte[] data_transfer = tempBuffer.array();
+			buffer.clear();
+			tempBuffer.clear();
+			int2Byte(0, offset, data_transfer);
+			container = new «clazz.name»_«name.toFirstUpper()»_Map(result, data_transfer);
+		} else {
+			return container;
+		}
+
+        return container;
+	}
+	
+	private static «type.fqName()» setByte(«type.fqName()» «type.name.toLowerCase()», byte[] payload) {
+		return new «type.fqName()»(payload);
+	}
+«ENDDEFINE»
+
+«DEFINE internalReturnTypeForMap(uml::Class clazz) FOR uml::Property»
+	public static class «clazz.name»_«name.toFirstUpper()»_Map {
+		private java.util.Map<«getMapKey(this).type.name», «type.fqName()»> «name»;
+		private byte[] data;
+		
+		public «clazz.name»_«name.toFirstUpper()»_Map(java.util.Map<«getMapKey(this).type.name», «type.fqName()»> «name», byte[] data) {
+			this.«name» = «name»;
+			this.data = data;
+		}
+		
+		public java.util.Map<«getMapKey(this).type.name», «type.fqName()»> «toGetter()»() {
+			return this.«name»;
+		}
+		
+		public byte[] getData() {
+			return data;
+		}
+	}
+«ENDDEFINE»

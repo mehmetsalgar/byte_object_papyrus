@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:style="http://www.eclipse.org/papyrus/infra/viewpoints/policy/style" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="_uwu8UOJIEea6t-lT0OduVQ" type="PapyrusUMLProfileDiagram" name="Profile Diagram" measurementUnit="Pixel">
+  <children xmi:type="notation:Shape" xmi:id="_Pm5hEOJJEea6t-lT0OduVQ" type="PrimitiveType_Shape">
+    <children xmi:type="notation:DecorationNode" xmi:id="_Pm6vMOJJEea6t-lT0OduVQ" type="PrimitiveType_NameLabel"/>
+    <element xmi:type="uml:PrimitiveType" href="byte_object_java.profile.uml.profile.uml#_Pm3E0OJJEea6t-lT0OduVQ"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Pm5hEeJJEea6t-lT0OduVQ" x="43" y="31" width="153"/>
+  </children>
+  <children xmi:type="notation:Shape" xmi:id="_TLuSsOJJEea6t-lT0OduVQ" type="PrimitiveType_Shape">
+    <children xmi:type="notation:DecorationNode" xmi:id="_TLuSsuJJEea6t-lT0OduVQ" type="PrimitiveType_NameLabel"/>
+    <element xmi:type="uml:PrimitiveType" href="byte_object_java.profile.uml.profile.uml#_TLsdgOJJEea6t-lT0OduVQ"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_TLuSseJJEea6t-lT0OduVQ" x="214" y="31"/>
+  </children>
+  <children xmi:type="notation:Shape" xmi:id="_WhKkgOJJEea6t-lT0OduVQ" type="PrimitiveType_Shape">
+    <children xmi:type="notation:DecorationNode" xmi:id="_WhKkguJJEea6t-lT0OduVQ" type="PrimitiveType_NameLabel"/>
+    <element xmi:type="uml:PrimitiveType" href="byte_object_java.profile.uml.profile.uml#_WhJ9cOJJEea6t-lT0OduVQ"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_WhKkgeJJEea6t-lT0OduVQ" x="335" y="31"/>
+  </children>
+  <children xmi:type="notation:Shape" xmi:id="_Yvv78OJJEea6t-lT0OduVQ" type="PrimitiveType_Shape">
+    <children xmi:type="notation:DecorationNode" xmi:id="_YvwjAOJJEea6t-lT0OduVQ" type="PrimitiveType_NameLabel"/>
+    <element xmi:type="uml:PrimitiveType" href="byte_object_java.profile.uml.profile.uml#_YvvU4OJJEea6t-lT0OduVQ"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Yvv78eJJEea6t-lT0OduVQ" x="443" y="30"/>
+  </children>
+  <children xmi:type="notation:Shape" xmi:id="_c7m4YOJJEea6t-lT0OduVQ" type="PrimitiveType_Shape">
+    <children xmi:type="notation:DecorationNode" xmi:id="_c7m4YuJJEea6t-lT0OduVQ" type="PrimitiveType_NameLabel"/>
+    <element xmi:type="uml:PrimitiveType" href="byte_object_java.profile.uml.profile.uml#_c7lqQOJJEea6t-lT0OduVQ"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_c7m4YeJJEea6t-lT0OduVQ" x="565" y="30"/>
+  </children>
+  <children xmi:type="notation:Shape" xmi:id="_jgpSsOJJEea6t-lT0OduVQ" type="PrimitiveType_Shape">
+    <children xmi:type="notation:DecorationNode" xmi:id="_jgpSsuJJEea6t-lT0OduVQ" type="PrimitiveType_NameLabel"/>
+    <element xmi:type="uml:PrimitiveType" href="byte_object_java.profile.uml.profile.uml#_jgoEkOJJEea6t-lT0OduVQ"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_jgpSseJJEea6t-lT0OduVQ" x="670" y="31"/>
+  </children>
+  <children xmi:type="notation:Shape" xmi:id="_mzHwEOJJEea6t-lT0OduVQ" type="PrimitiveType_Shape">
+    <children xmi:type="notation:DecorationNode" xmi:id="_mzHwEuJJEea6t-lT0OduVQ" type="PrimitiveType_NameLabel"/>
+    <element xmi:type="uml:PrimitiveType" href="byte_object_java.profile.uml.profile.uml#_mzHJAOJJEea6t-lT0OduVQ"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_mzHwEeJJEea6t-lT0OduVQ" x="775" y="31"/>
+  </children>
+  <children xmi:type="notation:Shape" xmi:id="_rV3igOJJEea6t-lT0OduVQ" type="PrimitiveType_Shape">
+    <children xmi:type="notation:DecorationNode" xmi:id="_rV3iguJJEea6t-lT0OduVQ" type="PrimitiveType_NameLabel"/>
+    <element xmi:type="uml:PrimitiveType" href="byte_object_java.profile.uml.profile.uml#_rV27cOJJEea6t-lT0OduVQ"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_rV3igeJJEea6t-lT0OduVQ" x="879" y="31"/>
+  </children>
+  <styles xmi:type="notation:StringValueStyle" xmi:id="_uwu8UeJIEea6t-lT0OduVQ" name="diagram_compatibility_version" stringValue="1.2.0"/>
+  <styles xmi:type="notation:DiagramStyle" xmi:id="_uwu8UuJIEea6t-lT0OduVQ"/>
+  <styles xmi:type="style:PapyrusViewStyle" xmi:id="_uwu8U-JIEea6t-lT0OduVQ">
+    <owner xmi:type="uml:Profile" href="byte_object_java.profile.uml.profile.uml#_uvu2wOJIEea6t-lT0OduVQ"/>
+  </styles>
+  <element xmi:type="uml:Profile" href="byte_object_java.profile.uml.profile.uml#_uvu2wOJIEea6t-lT0OduVQ"/>
+</notation:Diagram>

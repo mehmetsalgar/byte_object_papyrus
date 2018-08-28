@@ -1,0 +1,105 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+	<groupId>org.salgar.byte_object</groupId>
+	<artifactId>byte_object_papyrus</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>byte_object_fornax_extension</artifactId>
+  <packaging>jar</packaging>
+
+  <name>Byte Object Fornax Extensions</name>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+          <!-- ensure that the compile uses the same encoding as the file encoding
+            of the *.java -->
+          <compilerArguments>
+            <encoding>utf8</encoding>
+          </compilerArguments>
+        </configuration>
+      </plugin>
+      <!--plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>target-platform-configuration</artifactId>
+        <configuration>
+          <pomDependencies>consider</pomDependencies>
+        </configuration>
+      </plugin-->
+    </plugins>
+  </build>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.salgar.byte_object</groupId>
+      <artifactId>eclipse_dependencies</artifactId>
+      <version>${project.version}</version>
+      <type>jar</type>
+      <classifier>repackaged</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.ecore</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.uml2</groupId>
+      <artifactId>common</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.emf</groupId>
+          <artifactId>ecore</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.emf.ecore</groupId>
+          <artifactId>xmi</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.emf.mapping</groupId>
+          <artifactId>ecore2xml</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.uml2</groupId>
+      <artifactId>uml</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.emf</groupId>
+          <artifactId>ecore</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.emf.ecore</groupId>
+          <artifactId>xmi</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.emf.mapping</groupId>
+          <artifactId>ecore2xml</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+  </dependencies>
+</project>
+

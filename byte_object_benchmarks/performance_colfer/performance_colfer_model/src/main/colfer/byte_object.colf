@@ -1,0 +1,90 @@
+package byte_object
+
+type Orders struct {
+    id uint64
+    order []Order
+}
+
+type Order struct {
+    id uint64
+    buyDate timestamp
+    stage uint32
+    processaed bool
+    message text
+    event text
+    error text
+    customer Customer
+    products []ProductOrderContainer
+    bills []Bill
+    paymentreminders []PaymentReminder
+    container Container
+}
+
+type Customer struct {
+    id uint64
+    firstname text
+    lastname text
+    birthDate timestamp
+    address Address
+}
+
+type ProductOrderContainer struct {
+    quantity uint64
+    product Product
+}
+
+type Product struct {
+    id uint64
+    name text
+    price uint64
+    description text
+    productStatus text
+    productStatistics  ProductStatistics
+}
+
+type ProductStatistics struct {
+    weeklyAverage uint64
+    monthlyAverage uint64
+    yearlyAverage uint64
+}
+
+type Bill struct {
+    id uint64
+    amount uint64
+    latestPayementDay timestamp
+    cashingInstitution []CashingInstitution
+}
+
+type Address struct {
+    id uint64
+    street text
+    houseNo text
+    PLZ text
+    city text
+    country text
+}
+
+type CashingInstitution struct {
+    id uint64
+    name text
+    address Address
+}
+
+type PaymentReminder struct {
+    id uint64
+    interest uint64
+    rank text
+}
+
+type Identifier struct {
+    id uint32
+    someText text
+    addresses []Address
+}
+
+type Container struct {
+    id uint32
+    containerText text
+    identifiermap []Identifier
+    productOrderContainer []ProductOrderContainer
+}

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<!--TODO for web application change logs file location to ./WebContent/WEB-INF/logs...  -->
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<appender name="Error" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="./WEB-INF/logs/composer_tests_error.log"/>
+		<param name="DatePattern" value=".yyyy-MM-dd" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %p [%t] %c (%M:%L) - %m%n"/>
+		</layout>
+	</appender>
+	
+	<appender name="ConsoleAppender" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %p [%t] %c (%M:%L) - %m%n"/>
+		</layout>
+  	</appender>
+	
+	<appender name="Test" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="test.log"/>
+		<param name="DatePattern" value=".yyyy-MM-dd"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %p [%t] %c (%M:%L) - %m%n"/>
+		</layout>
+	</appender>
+			
+	<logger name="org.salgar" additivity="false">
+		<level value="DEBUG"/>
+		    <appender-ref ref="ConsoleAppender"/>
+		    <appender-ref ref="Test"/>
+	</logger>
+	
+  	<root>
+    	<level value="DEBUG"/>
+	    <appender-ref ref="Error"/>
+		<appender-ref ref="ConsoleAppender"/>
+	</root>
+
+</log4j:configuration>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Profile xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="_uvu2wOJIEea6t-lT0OduVQ" name="Java_Profile">
+  <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_wg414OJJEea6t-lT0OduVQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+    <contents xmi:type="ecore:EPackage" xmi:id="_EO_YMOJKEea6t-lT0OduVQ" name="Java_Profile" nsURI="http:///schemas/Java_Profile/_EAoMEOJKEea6t-lT0OduVQ/1" nsPrefix="Java_Profile">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_EO_YSeJKEea6t-lT0OduVQ" source="PapyrusVersion">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_EO_YSuJKEea6t-lT0OduVQ" key="Version" value="0.0.2"/>
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_EO_YS-JKEea6t-lT0OduVQ" key="Comment" value=""/>
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_EO_YTOJKEea6t-lT0OduVQ" key="Copyright" value=""/>
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_EO_YTeJKEea6t-lT0OduVQ" key="Date" value="2017-01-24"/>
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_EO_YTuJKEea6t-lT0OduVQ" key="Author" value=""/>
+      </eAnnotations>
+      <eClassifiers xmi:type="ecore:EDataType" xmi:id="_EO_YMeJKEea6t-lT0OduVQ" name="javalangString" instanceClassName="java.lang.String">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_EO_YMuJKEea6t-lT0OduVQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_Pm3E0OJJEea6t-lT0OduVQ">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_EO_YM-JKEea6t-lT0OduVQ" key="originalName" value="java.lang.String"/>
+        </eAnnotations>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EDataType" xmi:id="_EO_YNOJKEea6t-lT0OduVQ" name="javalangInteger" instanceClassName="java.lang.String">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_EO_YNeJKEea6t-lT0OduVQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_TLsdgOJJEea6t-lT0OduVQ">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_EO_YNuJKEea6t-lT0OduVQ" key="originalName" value="java.lang.Integer"/>
+        </eAnnotations>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EDataType" xmi:id="_EO_YN-JKEea6t-lT0OduVQ" name="javalangLong" instanceClassName="java.lang.String">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_EO_YOOJKEea6t-lT0OduVQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_WhJ9cOJJEea6t-lT0OduVQ">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_EO_YOeJKEea6t-lT0OduVQ" key="originalName" value="java.lang.Long"/>
+        </eAnnotations>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EDataType" xmi:id="_EO_YOuJKEea6t-lT0OduVQ" name="javalangBoolean" instanceClassName="java.lang.String">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_EO_YO-JKEea6t-lT0OduVQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_YvvU4OJJEea6t-lT0OduVQ">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_EO_YPOJKEea6t-lT0OduVQ" key="originalName" value="java.lang.Boolean"/>
+        </eAnnotations>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EDataType" xmi:id="_EO_YPeJKEea6t-lT0OduVQ" name="javautilDate" instanceClassName="java.lang.String">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_EO_YPuJKEea6t-lT0OduVQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_c7lqQOJJEea6t-lT0OduVQ">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_EO_YP-JKEea6t-lT0OduVQ" key="originalName" value="java.util.Date"/>
+        </eAnnotations>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EDataType" xmi:id="_EO_YQOJKEea6t-lT0OduVQ" name="javautilList" instanceClassName="java.lang.String">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_EO_YQeJKEea6t-lT0OduVQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_jgoEkOJJEea6t-lT0OduVQ">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_EO_YQuJKEea6t-lT0OduVQ" key="originalName" value="java.util.List"/>
+        </eAnnotations>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EDataType" xmi:id="_EO_YQ-JKEea6t-lT0OduVQ" name="javautilMap" instanceClassName="java.lang.String">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_EO_YROJKEea6t-lT0OduVQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_mzHJAOJJEea6t-lT0OduVQ">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_EO_YReJKEea6t-lT0OduVQ" key="originalName" value="java.util.Map"/>
+        </eAnnotations>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EDataType" xmi:id="_EO_YRuJKEea6t-lT0OduVQ" name="javautilSet" instanceClassName="java.lang.String">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_EO_YR-JKEea6t-lT0OduVQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_rV27cOJJEea6t-lT0OduVQ">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_EO_YSOJKEea6t-lT0OduVQ" key="originalName" value="java.util.Set"/>
+        </eAnnotations>
+      </eClassifiers>
+    </contents>
+    <contents xmi:type="ecore:EPackage" xmi:id="_wg5c8OJJEea6t-lT0OduVQ" name="model" nsURI="http:///schemas/model/_vqO6sOJJEea6t-lT0OduVQ/0" nsPrefix="model">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_wg6EAOJJEea6t-lT0OduVQ" source="PapyrusVersion">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_wg6EAeJJEea6t-lT0OduVQ" key="Version" value="0.0.1"/>
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_wg6EAuJJEea6t-lT0OduVQ" key="Comment" value=""/>
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_wg6EA-JJEea6t-lT0OduVQ" key="Copyright" value=""/>
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_wg6EBOJJEea6t-lT0OduVQ" key="Date" value="2017-01-24"/>
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_wg6EBeJJEea6t-lT0OduVQ" key="Author" value=""/>
+      </eAnnotations>
+      <eClassifiers xmi:type="ecore:EDataType" xmi:id="_wg5c8eJJEea6t-lT0OduVQ" name="javalangString" instanceClassName="java.lang.String">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_wg5c8uJJEea6t-lT0OduVQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_Pm3E0OJJEea6t-lT0OduVQ">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_wg5c8-JJEea6t-lT0OduVQ" key="originalName" value="java.lang.String"/>
+        </eAnnotations>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EDataType" xmi:id="_wg5c9OJJEea6t-lT0OduVQ" name="javalangInteger" instanceClassName="java.lang.String">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_wg5c9eJJEea6t-lT0OduVQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_TLsdgOJJEea6t-lT0OduVQ">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_wg5c9uJJEea6t-lT0OduVQ" key="originalName" value="java.lang.Integer"/>
+        </eAnnotations>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EDataType" xmi:id="_wg5c9-JJEea6t-lT0OduVQ" name="javalangLong" instanceClassName="java.lang.String">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_wg5c-OJJEea6t-lT0OduVQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_WhJ9cOJJEea6t-lT0OduVQ">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_wg5c-eJJEea6t-lT0OduVQ" key="originalName" value="java.lang.Long"/>
+        </eAnnotations>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EDataType" xmi:id="_wg5c-uJJEea6t-lT0OduVQ" name="javalangBoolean" instanceClassName="java.lang.String">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_wg5c--JJEea6t-lT0OduVQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_YvvU4OJJEea6t-lT0OduVQ">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_wg5c_OJJEea6t-lT0OduVQ" key="originalName" value="java.lang.Boolean"/>
+        </eAnnotations>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EDataType" xmi:id="_wg5c_eJJEea6t-lT0OduVQ" name="javautilDate" instanceClassName="java.lang.String">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_wg5c_uJJEea6t-lT0OduVQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_c7lqQOJJEea6t-lT0OduVQ">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_wg5c_-JJEea6t-lT0OduVQ" key="originalName" value="java.util.Date"/>
+        </eAnnotations>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EDataType" xmi:id="_wg5dAOJJEea6t-lT0OduVQ" name="javautilList" instanceClassName="java.lang.String">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_wg5dAeJJEea6t-lT0OduVQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_jgoEkOJJEea6t-lT0OduVQ">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_wg5dAuJJEea6t-lT0OduVQ" key="originalName" value="java.util.List"/>
+        </eAnnotations>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EDataType" xmi:id="_wg5dA-JJEea6t-lT0OduVQ" name="javautilMap" instanceClassName="java.lang.String">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_wg5dBOJJEea6t-lT0OduVQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_mzHJAOJJEea6t-lT0OduVQ">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_wg5dBeJJEea6t-lT0OduVQ" key="originalName" value="java.util.Map"/>
+        </eAnnotations>
+      </eClassifiers>
+      <eClassifiers xmi:type="ecore:EDataType" xmi:id="_wg5dBuJJEea6t-lT0OduVQ" name="javautilSet" instanceClassName="java.lang.String">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_wg5dB-JJEea6t-lT0OduVQ" source="http://www.eclipse.org/uml2/2.0.0/UML" references="_rV27cOJJEea6t-lT0OduVQ">
+          <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_wg5dCOJJEea6t-lT0OduVQ" key="originalName" value="java.util.Set"/>
+        </eAnnotations>
+      </eClassifiers>
+    </contents>
+  </eAnnotations>
+  <packageImport xmi:type="uml:PackageImport" xmi:id="_uzgjgOJIEea6t-lT0OduVQ">
+    <importedPackage xmi:type="uml:Model" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#_0"/>
+  </packageImport>
+  <packageImport xmi:type="uml:PackageImport" xmi:id="_uzgjgeJIEea6t-lT0OduVQ">
+    <importedPackage xmi:type="uml:Model" href="pathmap://UML_METAMODELS/UML.metamodel.uml#_0"/>
+  </packageImport>
+  <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_Pm3E0OJJEea6t-lT0OduVQ" name="java.lang.String"/>
+  <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_TLsdgOJJEea6t-lT0OduVQ" name="java.lang.Integer"/>
+  <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_WhJ9cOJJEea6t-lT0OduVQ" name="java.lang.Long"/>
+  <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_YvvU4OJJEea6t-lT0OduVQ" name="java.lang.Boolean"/>
+  <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_c7lqQOJJEea6t-lT0OduVQ" name="java.util.Date"/>
+  <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_jgoEkOJJEea6t-lT0OduVQ" name="java.util.List"/>
+  <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_mzHJAOJJEea6t-lT0OduVQ" name="java.util.Map"/>
+  <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_rV27cOJJEea6t-lT0OduVQ" name="java.util.Set"/>
+</uml:Profile>

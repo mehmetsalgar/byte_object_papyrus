@@ -1,0 +1,479 @@
+«EXTENSION org::fornax::cartridges::uml2::javabasic::m2t::Helper»
+«EXTENSION org::fornax::cartridges::uml2::javabasic::m2t::Names»
+«EXTENSION org::fornax::cartridges::uml2::javabasic::m2t::DataType»
+«EXTENSION org::fornax::cartridges::uml2::javabasic::m2t::Properties»
+«EXTENSION ext::counter»
+«EXTENSION ext::globalvar»
+«EXTENSION ext::byte_object»
+«EXTENSION ext::Properties»
+
+«DEFINE attribute FOR uml::Classifier»
+	«FOREACH AllAssociations().typeSelect(uml::Association) AS ass»
+		«REM»all properties that don't refer to current class«ENDREM»
+		«FOREACH ass.memberEnd.select(e|e.type.name!=name) AS a»
+			«EXPAND field FOR a»
+		«ENDFOREACH»
+		«REM»all properties that both refer to current class«ENDREM»
+		«IF ass.memberEnd.select(e|e.type.name==name).size==2»
+			«FOREACH ass.memberEnd.select(e|e.type.name==name) AS a»
+				«EXPAND field FOR a»
+			«ENDFOREACH»
+		«ENDIF»
+	«ENDFOREACH»
+«ENDDEFINE»
+
+«DEFINE field FOR uml::Property»
+	 «IF isNavigable()»
+	 	«IF getUpper() == -1»
+	 		«IF getMapKey(this) != null»
+	 			private java.util.Map<«getMapKey(this).type.name», «type.fqName()»> «name»; 
+	 		«ELSE»
+	 			private «getPropertyType()» «name»;
+	 		«ENDIF»
+	 		«REM»= «getPropertyTypeImpl()»«ENDREM»
+	 	«ELSEIF getUpper() == 1»
+	 		private «type.fqName()» «name» = null;
+	 	«ENDIF»
+	 «ENDIF»
+«ENDDEFINE»
+
+«DEFINE collectionsForStreamSerialisation FOR uml::Classifier»
+    «FOREACH AllAssociations().typeSelect(uml::Association) AS ass»
+        «checkQualified(ass)»
+        «REM»all properties that don't refer to current class«ENDREM»
+        «FOREACH ass.memberEnd.select(e|e.type.name!=name) AS a»
+            «EXPAND collectionsForStreamSerialisation(this) FOR a»
+        «ENDFOREACH»
+        «REM»all properties that both refer to current class«ENDREM»
+        «IF ass.memberEnd.select(e|e.type.name==name).size==2»
+            «FOREACH ass.memberEnd.select(e|e.type.name==name)   AS a»
+                «EXPAND collectionsForStreamSerialisation(this) FOR a»
+            «ENDFOREACH»
+        «ENDIF»
+    «ENDFOREACH»
+«ENDDEFINE»
+
+«DEFINE collectionsForStreamSerialisation(uml::Class clazz) FOR uml::Property»
+    «IF isNavigable()»
+        «IF getUpper() == -1»
+            //TODO do we really need this without null implementation
+            «IF getMapKey(this) != null»
+               if(«clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()».equals(field)) {
+                   if(this.«name» != null) {
+                       outputStream.write(AbstractMetaData.int2Byte(this.«name».size()));
+                       for(«getMapKey(this).type.name» key : this.«name».keySet()) {
+                            outputStream.write(AbstractMetaData.int2Byte(getKeyLength(key)));
+                            outputStream.write(getByte(key));
+                            «type.name» «type.name.toLowerCase()» = this.«name».get(key);
+                            outputStream.write(AbstractMetaData.int2Byte(«type.name.toLowerCase()».calculateLength()));
+                            «type.name.toLowerCase()».toByte(outputStream);
+                       }
+                   } else {
+                        outputStream.write(AbstractMetaData.int2Byte(0));
+                   }
+                   return;
+               }
+            «ELSE»
+                if(«clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()».equals(field)) {
+                    if(this.«name» != null) {
+                        int n = this.«name».size();
+                        outputStream.write(AbstractMetaData.int2Byte(n));
+                        for(int i = 0 ; i < n; i++) {
+                            «type.name» «type.name.toLowerCase()» = this.«name».get(i);
+                            outputStream.write(AbstractMetaData.int2Byte(«type.name.toLowerCase()».calculateLength()));
+                            «type.name.toLowerCase()».toByte(outputStream);
+                        }
+                    } else {
+                        outputStream.write(AbstractMetaData.int2Byte(0));
+                    }
+                    return;
+                }
+            «ENDIF»
+        «ELSEIF getUpper() == 1»
+            if(«clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()».equals(field)) {
+                if(this.«name» != null) {
+                    «IF isEnum(type)»
+                        outputStream.write(AbstractMetaData.int2Byte(this.«name».toString().length()));
+                        outputStream.write(this.«name».toString().getBytes());
+                    «ELSE»
+                        outputStream.write(AbstractMetaData.int2Byte(this.«name».calculateLength()));
+                        this.«name».toByte(outputStream);
+                    «ENDIF»
+                } else {
+                    outputStream.write(AbstractMetaData.int2Byte(0));
+                }
+                return;
+            }
+        «ENDIF»
+    «ENDIF»
+«ENDDEFINE»
+
+«DEFINE collectionsForByteBufferSerialisation FOR uml::Classifier»
+    «FOREACH AllAssociations().typeSelect(uml::Association) AS ass»
+        «checkQualified(ass)»
+        «REM»all properties that don't refer to current class«ENDREM»
+        «FOREACH ass.memberEnd.select(e|e.type.name!=name) AS a»
+            «EXPAND collectionsForByteBufferSerialisation(this) FOR a»
+        «ENDFOREACH»
+        «REM»all properties that both refer to current class«ENDREM»
+        «IF ass.memberEnd.select(e|e.type.name==name).size==2»
+            «FOREACH ass.memberEnd.select(e|e.type.name==name)   AS a»
+                «EXPAND collectionsForByteBufferSerialisation(this) FOR a»
+            «ENDFOREACH»
+        «ENDIF»
+    «ENDFOREACH»
+«ENDDEFINE»
+
+«DEFINE collectionsForByteBufferSerialisation(uml::Class clazz) FOR uml::Property»
+    «IF isNavigable()»
+        «IF getUpper() == -1»
+            //TODO do we really need this without null implementation
+            «IF getMapKey(this) != null»
+               if(«clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()».equals(field)) {
+                   if(this.«name» != null) {
+                       byteBuffer.put(AbstractMetaData.int2Byte(this.«name».size()));
+                       for(«getMapKey(this).type.name» key : this.«name».keySet()) {
+                            byteBuffer.put(AbstractMetaData.int2Byte(getKeyLength(key)));
+                            byteBuffer.put(getByte(key));
+                            «type.name» «type.name.toLowerCase()» = this.«name».get(key);
+                            byteBuffer.put(AbstractMetaData.int2Byte(«type.name.toLowerCase()».calculateLength()));
+                            «type.name.toLowerCase()».toByte(byteBuffer);
+                       }
+                   } else {
+                        byteBuffer.put(AbstractMetaData.int2Byte(0));
+                   }
+                   return;
+               }
+            «ELSE»
+                if(«clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()».equals(field)) {
+                    if(this.«name» != null) {
+                        int n = this.«name».size();
+                        byteBuffer.put(AbstractMetaData.int2Byte(n));
+                        for(int i = 0 ; i < n; i++) {
+                            «type.name» «type.name.toLowerCase()» = this.«name».get(i);
+                            byteBuffer.put(AbstractMetaData.int2Byte(«type.name.toLowerCase()».calculateLength()));
+                            «type.name.toLowerCase()».toByte(byteBuffer);
+                        }
+                    } else {
+                        byteBuffer.put(AbstractMetaData.int2Byte(0));
+                    }
+                    return;
+                }
+            «ENDIF»
+        «ELSEIF getUpper() == 1»
+            if(«clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()».equals(field)) {
+                if(this.«name» != null) {
+                    «IF isEnum(type)»
+                        byteBuffer.put(AbstractMetaData.int2Byte(this.«name».toString().length()));
+                        byteBuffer.put(this.«name».toString().getBytes());
+                    «ELSE»
+                        byteBuffer.put(AbstractMetaData.int2Byte(this.«name».calculateLength()));
+                        this.«name».toByte(byteBuffer);
+                    «ENDIF»
+                } else {
+                    byteBuffer.put(AbstractMetaData.int2Byte(0));
+                }
+                return;
+            }
+        «ENDIF»
+    «ENDIF»
+«ENDDEFINE»
+
+«DEFINE collectionsForStreamLength FOR uml::Classifier»
+    «FOREACH AllAssociations().typeSelect(uml::Association) AS ass»
+        «checkQualified(ass)»
+        «REM»all properties that don't refer to current class«ENDREM»
+        «FOREACH ass.memberEnd.select(e|e.type.name!=name) AS a»
+            «EXPAND collectionsForStreamLength(this) FOR a»
+        «ENDFOREACH»
+        «REM»all properties that both refer to current class«ENDREM»
+        «IF ass.memberEnd.select(e|e.type.name==name).size==2»
+            «FOREACH ass.memberEnd.select(e|e.type.name==name)   AS a»
+                «EXPAND collectionsForStreamLength(this) FOR a»
+            «ENDFOREACH»
+        «ENDIF»
+    «ENDFOREACH»
+«ENDDEFINE»
+
+«DEFINE collectionsForStreamLength(uml::Class clazz) FOR uml::Property»
+    «IF isNavigable()»
+        «IF getUpper() == -1»
+            //TODO do we really need this without null implementation
+            «IF getMapKey(this) != null»
+               if(«clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()».equals(field)) {
+                    int length = 4;
+                    for(«getMapKey(this).type.name» key : this.«name».keySet()) {
+                        length += AbstractMetaData.getKeyLength(key) + 4;
+                        length += this.«name».get(key).calculateLength() + 4;
+                    }
+                    return length;
+               }
+            «ELSE»
+                if(«clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()».equals(field)) {
+                    int length = 4;
+                    if (this.«name» != null) {
+                        for(int i = 0, n = this.«name».size() ; i < n; i++) {
+                            length += 4 + this.«name».get(i).calculateLength();
+                        }
+                    }
+                    return length;
+                }
+            «ENDIF»
+        «ELSEIF getUpper() == 1»
+            if(«clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()».equals(field)) {
+                «IF isEnum(type)»
+                    return this.«name».toString().length() + 4;
+                «ELSE»
+                    if(this.«name» != null) {
+                        return this.«name».calculateLength() + 4;
+                    } else {
+                        return 4;
+                    }
+                «ENDIF»
+            }
+        «ENDIF»
+    «ENDIF»
+«ENDDEFINE»
+
+«DEFINE collectionsForSerialisation FOR uml::Classifier»
+	«FOREACH AllAssociations().typeSelect(uml::Association) AS ass»
+		«checkQualified(ass)»
+		«REM»all properties that don't refer to current class«ENDREM»
+		«FOREACH ass.memberEnd.select(e|e.type.name!=name) AS a»
+			«EXPAND collectionsForSerialisation(this) FOR a»
+		«ENDFOREACH»
+		«REM»all properties that both refer to current class«ENDREM»
+		«IF ass.memberEnd.select(e|e.type.name==name).size==2»
+			«FOREACH ass.memberEnd.select(e|e.type.name==name)   AS a»
+				«EXPAND collectionsForSerialisation(this) FOR a»
+			«ENDFOREACH»
+		«ENDIF»
+	«ENDFOREACH»
+«ENDDEFINE»
+
+«DEFINE collectionsForSerialisation(uml::Class clazz) FOR uml::Property»
+	«IF isNavigable()»
+		«IF getUpper() == -1»
+			//TODO do we really need this without null implementation
+			if(this.«name» != null) {
+				«IF getMapKey(this) != null»
+					java.util.List<org.salgar.byte_object.metadata.MapKeyValueByte> bytes = new java.util.ArrayList<>(this.identifiermap.size());
+					int totalLength = 0;
+					for («getMapKey(this).type.name» key : this.«name».keySet()) {
+                        «type.fqName()» ser«type.name.toFirstUpper()» = this.«name».get(key);
+                        org.salgar.byte_object.metadata.MapKeyValueByte mapKeyValueByte =
+                            new org.salgar.byte_object.metadata.MapKeyValueByte();
+                        mapKeyValueByte.setKey(getByte(key));
+                        mapKeyValueByte.setValue(«clazz.name»MetaData.getByte(serIdentifier));
+
+                        totalLength+=mapKeyValueByte.getKey().length;
+                        totalLength+=mapKeyValueByte.getValue().length;
+
+                        bytes.add(mapKeyValueByte);
+                    }
+                    add«name.toFirstUpper()»(bytes, totalLength);
+				«ELSE»
+					add«name.toFirstUpper()»();
+				«ENDIF»
+			}
+		«ELSEIF getUpper() == 1»
+			if(this.«name» != null) {
+				add«name.toFirstUpper()»(this.«name»);
+			}
+		«ENDIF»
+	«ENDIF»	
+«ENDDEFINE»
+
+«DEFINE accessors FOR uml::Classifier»
+	«FOREACH AllAssociations().typeSelect(uml::Association) AS ass»
+		«REM»all properties that don't refer to current class«ENDREM»
+		«FOREACH ass.memberEnd.select(e|e.type.name!=name) AS a»
+			«EXPAND accessors(this) FOR a»
+		«ENDFOREACH»
+		«REM»all properties that both refer to current class«ENDREM»
+		«IF ass.memberEnd.select(e|e.type.name==name).size==2»
+			«FOREACH ass.memberEnd.select(e|e.type.name==name)   AS a»
+				«EXPAND accessors(this) FOR a»
+			«ENDFOREACH»
+			public void setData(byte[] data) {
+                this.data = data;
+            }
+		«ENDIF»
+	«ENDFOREACH»
+«ENDDEFINE»
+
+«DEFINE accessors(uml::Class clazz) FOR uml::Property»
+	«IF isNavigable()»
+		«IF getUpper() == -1»
+			«IF getMapKey(this) != null»
+				public void «toSetter()»(java.util.Map<«getMapKey(this).type.name», «type.fqName()»> «name») {
+					«IF byteObjectNullImplementation()»
+						if(«name» != null) {
+							boolean2Byte(false, «clazz.name»MetaData.getOffset(«clazz.name»MetaData.«clazz.name»Fields.NULL_«name.toUpperCase()»), this.data);
+					«ENDIF»
+						this.«name» = «name»;
+					«IF byteObjectNullImplementation()»
+						} else {
+							boolean2Byte(true, «clazz.name»MetaData.getOffset(«clazz.name»MetaData.«clazz.name»Fields.NULL_«name.toUpperCase()»), this.data);
+						}
+					«ENDIF»
+				}
+			«ELSE»
+				public void «toSetter()»(java.util.List<«type.fqName()»> «name») {
+					«IF byteObjectNullImplementation()»
+						if(«name» != null) {
+							boolean2Byte(false, «clazz.name»MetaData.getOffset(«clazz.name»MetaData.«clazz.name»Fields.NULL_«name.toUpperCase()»), this.data);
+					«ENDIF»
+						this.«name» = «name»;
+					«IF byteObjectNullImplementation()»
+						} else {
+							boolean2Byte(true, «clazz.name»MetaData.getOffset(«clazz.name»MetaData.«clazz.name»Fields.NULL_«name.toUpperCase()»), this.data);
+						}
+					«ENDIF»
+				}
+			«ENDIF»
+			
+			«IF getMapKey(this) != null»
+				public java.util.Map<«getMapKey(this).type.name», «type.fqName()»> «toGetter()»() {
+					«IF byteObjectNullImplementation()»
+						if(booleanFromByte(cMetaData.getOffset(«clazz.name»MetaData.«clazz.name»Fields.NULL_«name.toUpperCase()»), this.data)) {
+							return null;
+						}
+					«ENDIF»
+					if(this.«name» == null) {
+						this.«name» = getByte«name.toFirstUpper()»();
+					}	
+					return this.«name»;
+				}
+			«ELSE»
+				public java.util.List<«type.fqName()»> «toGetter()»() {
+					«IF byteObjectNullImplementation()»
+						if(booleanFromByte(cMetaData.getOffset(«clazz.name»MetaData.«clazz.name»Fields.NULL_«name.toUpperCase()»), this.data)) {
+							return null;
+						}
+					«ENDIF»
+					if(this.«name» == null) {
+						this.«name» = getByte«name.toFirstUpper()»();
+					}	
+					return this.«name»;
+				}
+			«ENDIF»
+		«ELSEIF getUpper() == 1»
+				public «type.fqName()» «toGetter()»(){
+					if(«name» == null) {
+						this.«name» = getByte«name.toFirstUpper()»();
+					}
+					return «name»;
+				}
+				
+				private «type.fqName()» getByte«name.toFirstUpper()»() {
+					«IF synchronizedImplementation()»
+						synchronized(this.data) {
+					«ENDIF» 
+							«clazz.name»MetaData.«clazz.name»_Object «clazz.name.toLowerCase()»_Object = «clazz.name»MetaData.getObject(«clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()», this.data, true);
+							this.data = «clazz.name.toLowerCase()»_Object.getData();
+					
+							«IF isEnum(type)»
+								return «type.fqName()».valueOf(new String(«clazz.name.toLowerCase()»_Object.getObject()));
+							«ELSE»
+								return new «type.fqName()»(«clazz.name.toLowerCase()»_Object.getObject());
+							«ENDIF»
+					«IF synchronizedImplementation()»
+						}
+					«ENDIF» 
+				}
+				
+				public void «toSetter()»(«type.fqName()» «name»){
+					this.«name» = «name»;
+				}
+				
+				private void add«name.toFirstUpper()»(«type.fqName()» «name») {
+					«IF isEnum(type)»
+						«IF synchronizedImplementation()»
+							synchronized(this.data) {
+						«ENDIF»
+						this.data = «clazz.name»MetaData.setObject(«name».toString().getBytes(), «clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()», this.data);
+						«IF synchronizedImplementation()»
+							}
+						«ENDIF»
+					«ELSE»
+						«IF synchronizedImplementation()»
+							synchronized(this.data) {
+						«ENDIF»
+						this.data = «clazz.name»MetaData.setObject(«name».toByte(), «clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()», this.data);
+						«IF synchronizedImplementation()»
+							}
+						«ENDIF»
+					«ENDIF»
+				}
+		«ENDIF»
+	«ENDIF»	
+«ENDDEFINE»
+
+«DEFINE serialisations FOR uml::Classifier»
+	«FOREACH AllAssociations().typeSelect(uml::Association) AS ass»
+		«REM»all properties that don't refer to current class«ENDREM»
+		«FOREACH ass.memberEnd.select(e|e.type.name!=name) AS a»
+			«EXPAND serialisations(this) FOR a»
+		«ENDFOREACH»
+		«REM»all properties that both refer to current class«ENDREM»
+		«IF ass.memberEnd.select(e|e.type.name==name).size==2»
+			«FOREACH ass.memberEnd.select(e|e.type.name==name)   AS a»
+				«EXPAND serialisations(this) FOR a»
+			«ENDFOREACH»
+		«ENDIF»
+	«ENDFOREACH»
+«ENDDEFINE»
+
+«DEFINE serialisations(uml::Class clazz) FOR uml::Property»
+	«IF isNavigable()»
+		«IF getUpper() == -1»
+			«IF getMapKey(this) != null»
+				private void add«name.toFirstUpper()»(java.util.List<org.salgar.byte_object.metadata.MapKeyValueByte> mapKeyValues, int totallength) {
+					«IF synchronizedImplementation()»
+						synchronized(this.data) {
+					«ENDIF» 
+							this.data = «clazz.name»MetaData.addMap(mapKeyValues, totallength, this.data, «clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()»);
+					«IF synchronizedImplementation()»
+						}
+					«ENDIF»
+				}
+				
+				private java.util.Map<«getMapKey(this).type.name», «type.fqName()»> getByte«name.toFirstUpper()»() {
+					«clazz.name»MetaData.«clazz.name»_«name.toFirstUpper()»_Map container = «clazz.name»MetaData.«toGetter()»(this.data, «clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()»);
+					this.data = container.getData();
+			
+					return container.get«name.toFirstUpper()»();
+				}
+			«ELSE»
+				private void add«name.toFirstUpper()»() {
+					«IF synchronizedImplementation()»
+						synchronized(this.data) {
+					«ENDIF»
+					        int n = this.«name».size();
+					        java.util.List<byte[]> bytes = new java.util.ArrayList<>(n);
+                            int payloadTotalLenght = 4 * n;
+                            for(int i = 0; i < n ; i++ ) {
+                                «type.fqName()» «type.name.toLowerCase()» = this.«name».get(i);
+                                byte[] «type.name.toLowerCase()»Bytes = «type.name.toLowerCase()».toByte();
+                                payloadTotalLenght +=  «type.name.toLowerCase()»Bytes.length;
+                                bytes.add(«type.name.toLowerCase()»Bytes);
+                            }
+                            this.data = «clazz.name»MetaData.add(bytes, payloadTotalLenght, this.data, «clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()»);
+					«IF synchronizedImplementation()»
+						}
+					«ENDIF» 
+				}
+				
+				private java.util.List<«type.fqName()»> getByte«name.toFirstUpper()»() {
+					«clazz.name»MetaData.«clazz.name»_«name.toFirstUpper()»_List container = «clazz.name»MetaData.«toGetter()»(this.data, «clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()»);
+					this.data = container.getData();
+			
+					return container.get«name.toFirstUpper()»();
+				}
+			«ENDIF»
+		«ELSEIF getUpper() == 1»
+			
+		«ENDIF»
+	«ENDIF»	
+«ENDDEFINE»

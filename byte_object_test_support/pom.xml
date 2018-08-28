@@ -1,0 +1,60 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.salgar.byte_object</groupId>
+        <artifactId>byte_object_papyrus</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>byte_object_test_support</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Byte Object Test Support</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.salgar.byte_object</groupId>
+            <artifactId>byte_object_model</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>java_serialize</id>
+
+            <properties>
+                <classifier.extension>js</classifier.extension>
+            </properties>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.salgar.byte_object</groupId>
+                    <artifactId>byte_object_model</artifactId>
+                    <version>1.0.0-SNAPSHOT</version>
+                    <classifier>${classifier.extension}</classifier>
+                </dependency>
+            </dependencies>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <extensions>false</extensions>
+                        <inherited>true</inherited>
+                        <configuration>
+                            <classifier>${classifier.extension}</classifier>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

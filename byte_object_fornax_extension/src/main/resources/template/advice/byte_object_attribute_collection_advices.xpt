@@ -1,0 +1,83 @@
+«EXTENSION org::fornax::cartridges::uml2::javabasic::m2t::Helper»
+«EXTENSION org::fornax::cartridges::uml2::javabasic::m2t::Names»
+«EXTENSION org::fornax::cartridges::uml2::javabasic::m2t::DataType»
+«EXTENSION org::fornax::cartridges::uml2::javabasic::m2t::Properties»
+«EXTENSION ext::counter»
+«EXTENSION ext::globalvar»
+«EXTENSION ext::byte_object»
+«EXTENSION ext::Properties»
+
+«DEFINE accessorForCollections(uml::Class clazz) FOR uml::Property»
+    public static «clazz.name»_«name.toFirstUpper()»_List «toGetter()»(byte[] data, «clazz.name»Fields field) {
+        List<«type.fqName()»> result = new LinkedList<«type.fqName()»>();
+        «clazz.name»_«name.toFirstUpper()»_List container = new «clazz.name»_«name.toFirstUpper()»_List(result, data);
+
+        int offset = getOffset(field);
+        if(offset == -1) {
+            FieldMetaData<«clazz.name»Fields> fmd = «clazz.name»MetaData.getLink(field);
+            if (fmd != null) {
+                offset = searchOffset(fmd, data);
+            }
+        }
+
+        int count = AbstractMetaData.intFromByte(offset, data);
+        if (count != 0) {
+            final java.nio.ByteBuffer buffer = java.nio.ByteBuffer.allocate(data.length);
+
+            buffer.put(data);
+
+            int i = 0;
+            int offset_length = 4;
+            while (i < count) {
+                int length = AbstractMetaData.intFromByte(offset + offset_length, data);
+
+                «type.fqName()» «name.toLowerCase()» = new «type.fqName()»();
+                byte[] tmp_byte = new byte[length];
+                offset_length += 4;
+                buffer.position(offset + offset_length);
+                buffer.get(tmp_byte, 0, length);
+                «name».setData(tmp_byte);
+                //setPackageField(«name», tmp_byte);
+                offset_length += length;
+                result.add(«name.toLowerCase()»);
+                i++;
+            }
+		
+			java.nio.ByteBuffer tempBuffer = java.nio.ByteBuffer.allocate((data.length - (offset_length - 4)));
+			tempBuffer.put(data, 0, offset + 4);
+			int offsetTotalLength = offset + offset_length;
+			if (offsetTotalLength < data.length) {
+				tempBuffer.put(data, offsetTotalLength, data.length - offsetTotalLength);
+			}
+			byte[] data_transfer = tempBuffer.array();
+			buffer.clear();
+			tempBuffer.clear();
+			int2Byte(0, offset, data_transfer);
+			container = new  «clazz.name»_«name.toFirstUpper()»_List(result, data_transfer);
+        } else {
+            return container;
+        }
+
+        return container;
+	}
+«ENDDEFINE»
+
+«DEFINE internalReturnTypeForCollections(uml::Class clazz) FOR uml::Property»
+	public static class «clazz.name»_«name.toFirstUpper()»_List {
+		private List<«type.fqName()»> «name»;
+		private byte[] data;
+		
+		public «clazz.name»_«name.toFirstUpper()»_List(List<«type.fqName()»> «name», byte[] data) {
+			this.«name» = «name»;
+			this.data = data;
+		}
+		
+		public List<«type.fqName()»> «toGetter()»() {
+			return this.«name»;
+		}
+		
+		public byte[] getData() {
+			return data;
+		}
+	}
+«ENDDEFINE»

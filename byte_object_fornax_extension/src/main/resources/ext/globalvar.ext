@@ -1,0 +1,73 @@
+/**MIT License
+*
+*Copyright (c) 2013-present, , GmbH.
+*
+*Permission is hereby granted, free of charge, to any person obtaining a copy
+*of this software and associated documentation files (the "Software"), to deal
+*in the Software without restriction, including without limitation the rights
+*to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+*copies of the Software, and to permit persons to whom the Software is
+*furnished to do so, subject to the following conditions:
+*
+*The above copyright notice and this permission notice shall be included in all
+*copies or substantial portions of the Software.
+*
+*THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+*IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+*FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+*AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+*LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+*OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+*SOFTWARE.
+*/
+/**
+ * Stores an object.
+ * @param s A key
+ * @param o The object to store. Pass null to remove the global var.
+ * @return Returns the stored object
+ */
+Object storeGlobalVar(String s, Object o) :
+   internalStoreGlobalVar(s,o) -> o 
+;
+
+/**
+ * Retrieves a stored object.
+ * @param s The key under which the object is stored.
+ * @return The stored object or null if no object was stored for the key.
+ */
+Object getGlobalVar(String s) :
+   internalGetGlobalVar(s)
+;
+
+/**
+ * Removes a stored object from the global var store.
+ * @param s The key under which the object is stored.
+ * @return The stored object or null if no object was stored for the key.
+ */
+Object removeGlobalVar(String s) :
+   internalRemoveGlobalVar(s)
+;
+
+/**
+ * Clears all global variables.
+ */
+Void clearGlobalVars() : internalClearGlobalVars();
+
+// -------------------------------- INTERNAL --------------------------------   
+
+
+private Void internalStoreGlobalVar(String s, Object o) :
+   JAVA org.salgar.byte_object.ext.GlobalVarExtensions.storeGlobalVar(java.lang.String, java.lang.Object)
+;
+
+private Object internalGetGlobalVar(String s) :
+   JAVA org.salgar.byte_object.ext.GlobalVarExtensions.getGlobalVar(java.lang.String)
+;
+
+private Object internalRemoveGlobalVar(String s) :
+   JAVA org.salgar.byte_object.ext.GlobalVarExtensions.removeGlobalVar(java.lang.String)
+;
+
+private Void internalClearGlobalVars() :
+   JAVA org.salgar.byte_object.ext.GlobalVarExtensions.clearGlobalVars()
+;

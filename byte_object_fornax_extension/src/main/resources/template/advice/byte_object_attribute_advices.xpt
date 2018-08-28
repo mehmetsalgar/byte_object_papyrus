@@ -1,0 +1,241 @@
+«EXTENSION org::fornax::cartridges::uml2::javabasic::m2t::Helper»
+«EXTENSION org::fornax::cartridges::uml2::javabasic::m2t::Names»
+«EXTENSION org::fornax::cartridges::uml2::javabasic::m2t::DataType»
+«EXTENSION org::fornax::cartridges::uml2::javabasic::m2t::Properties»
+«EXTENSION ext::counter»
+«EXTENSION ext::globalvar»
+«EXTENSION ext::byte_object»
+«EXTENSION ext::Properties»
+
+«DEFINE getterSetter FOR uml::Class»
+	«FOREACH AllAttributes().typeSelect(uml::Property).select(a|!a.isStatic && a.association==null) AS attr»
+	«REM»
+	«FOREACH AllAttributes().typeSelect(uml::Property).select(a|!a.isStatic) AS attr»
+	«ENDREM»
+	«EXPAND getterSetter(this) FOR attr»
+	«ENDFOREACH»
+«ENDDEFINE»
+
+«DEFINE getterSetter(uml::Class clazz) FOR uml::Property»
+	«IF isNavigable()»
+		«EXPAND getter(clazz)»
+		«EXPAND setter(clazz)»
+	«ENDIF»
+«ENDDEFINE»
+
+«DEFINE getter(uml::Class clazz) FOR uml::Property»
+	«IF VisibilityName(this) != "private"»
+		«IF getUpper() == -1»
+			public List<«name»> get«name»() {
+		        return «clazz.name»MetaData.«toGetter()»(this.data, «clazz.name»MetaData.«clazz.name»Fields.«name»);
+		    }
+		«ELSEIF getUpper() == 1»
+			«EXPAND getterSimple(clazz)»
+		«ENDIF»
+	«ENDIF»
+«ENDDEFINE»
+
+«DEFINE getterSimple(uml::Class clazz) FOR uml::Property»
+		«EXPAND org::fornax::cartridges::uml2::javabasic::m2t::Documentation::documentationGetter»
+		public «type.fqName()» «toGetter()»(){
+			«IF byteObjectNullImplementation()»	
+				if(«clazz.name»MetaData.booleanFromByte(«clazz.name»MetaData.getOffset(«clazz.name»MetaData.«clazz.name»Fields.NULL_«name.toUpperCase()»), this.data)) {
+					return null;
+				}
+			«ENDIF»
+			«IF "java.lang.Long"==type.fqName()»
+				return new Long(longFromByte(«clazz.name»MetaData.getOffset(«clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()»), this.data));
+			«ELSEIF "java.util.Date"==type.fqName()»
+				return new java.util.Date(longFromByte(«clazz.name»MetaData.getOffset(«clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()»), this.data));
+			«ELSEIF "java.lang.Integer"==type.fqName()»
+				return new Integer(intFromByte(«clazz.name»MetaData.getOffset(«clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()»), this.data));
+			«ELSEIF "java.lang.Boolean"==type.fqName()»
+				return new Boolean(booleanFromByte(«clazz.name»MetaData.getOffset(«clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()»), this.data));
+			«ELSEIF "java.lang.String"==type.fqName()»
+				return «clazz.name»MetaData.getString(«clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()», this.data);
+			«ELSEIF "java.util.Map"==type.fqName()»
+				return «clazz.name»MetaData.getMap(«clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()», this.data);
+			«ELSE»
+				«IF isEnum(type)»
+					return «type.fqName()».valueOf(«clazz.name»MetaData.getString(«clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()», this.data));
+				«ENDIF»
+			«ENDIF»
+		}
+«ENDDEFINE»
+
+«DEFINE setter(uml::Class clazz) FOR uml::Property»
+	«IF VisibilityName(this) != "private"»
+		«IF getUpper() == -1»
+			«IF getMapKey(this) != null»
+				public void add(«getMapKey(this).type.name» key, «name» «name.toLowerCase()») {
+					«IF synchronizedImplementation()»
+						synchronized(this.data) {
+					«ENDIF»
+	        				this.data = «clazz.name»MetaData.add(key, «name», this.data, «clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()»);
+	        		«IF synchronizedImplementation()»
+						}
+					«ENDIF»
+	   			}
+			«ELSE»
+				public void add(«name» «name.toLowerCase()») {
+					«IF synchronizedImplementation()»
+						synchronized(this.data) {
+					«ENDIF»
+		        			this.data = «clazz.name»MetaData.add(«name», this.data, «clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()»);
+		        	«IF synchronizedImplementation()»	
+		        		}
+	        		«ENDIF»
+	   			}
+   			«ENDIF»
+		«ELSEIF getUpper() == 1»
+			«EXPAND setterSimple(clazz)»
+		«ENDIF»
+	«ENDIF»
+«ENDDEFINE»
+
+«DEFINE setterSimple(uml::Class clazz) FOR uml::Property»
+		«EXPAND org::fornax::cartridges::uml2::javabasic::m2t::Documentation::documentationSetter»
+		
+		public void «toSetter()»(«type.fqName()» «name»){
+			«IF byteObjectNullImplementation()»	
+			if(«name» != null) {
+				«clazz.name»MetaData.boolean2Byte(false, «clazz.name»MetaData.getOffset(«clazz.name»MetaData.«clazz.name»Fields.NULL_«name.toUpperCase()»), this.data);
+			«ENDIF»
+			«IF "java.lang.Long"==type.fqName()»
+				long2Byte(«name», «clazz.name»MetaData.getOffset(«clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()»), this.data);
+			«ELSEIF "java.util.Date"==type.fqName()»
+				 long2Byte(«name».getTime(), «clazz.name»MetaData.getOffset(«clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()»), this.data);
+			«ELSEIF "java.lang.Integer"==type.fqName()»
+				int2Byte(«name», «clazz.name»MetaData.getOffset(«clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()»), this.data);
+			«ELSEIF "java.lang.Boolean"==type.fqName()»
+				boolean2Byte(«name», «clazz.name»MetaData.getOffset(«clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()»), this.data);
+			«ELSEIF "java.lang.String"==type.fqName()»
+				«IF synchronizedImplementation()»
+					synchronized(this.data) {
+				«ENDIF»
+					this.data = «clazz.name»MetaData.setString(«name», «clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()», this.data);
+				«IF synchronizedImplementation()»
+					}
+				«ENDIF»
+			«ELSEIF "java.util.Map"==type.fqName()»
+				«IF synchronizedImplementation()»
+					synchronized(this.data) {
+				«ENDIF»
+					this.data = «clazz.name»MetaData.setMap(«name», «clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()», this.data);
+				«IF synchronizedImplementation()»
+					}
+				«ENDIF»
+			«ELSE»
+				«IF isEnum(type)»
+					«IF synchronizedImplementation()»
+						synchronized(this.data) {
+					«ENDIF»
+						this.data = «clazz.name»MetaData.setString(«name».toString(), «clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()», this.data);
+					«IF synchronizedImplementation()»
+						}
+					«ENDIF»
+				«ENDIF»
+				//enumeration
+			«ENDIF»			
+			«IF byteObjectNullImplementation()»
+				} else {
+					«clazz.name»MetaData.boolean2Byte(true, «clazz.name»MetaData.getOffset(«clazz.name»MetaData.«clazz.name»Fields.NULL_«name.toUpperCase()»), this.data);
+					«IF "java.lang.String"==type.fqName()»
+						«IF synchronizedImplementation()»
+							synchronized(this.data) {
+						«ENDIF»
+						this.data = «clazz.name»MetaData.setString("", «clazz.name»MetaData.«clazz.name»Fields.«name.toUpperCase()», this.data);
+						«IF synchronizedImplementation()»
+							}
+						«ENDIF»
+					«ENDIF»
+				}
+			«ENDIF»}
+«ENDDEFINE»
+
+«DEFINE fieldDefinitions(uml::Class clazz) FOR uml::Classifier»
+	«EXPAND fieldDefinition(clazz) FOREACH AllAttributes().typeSelect(uml::Property).select(a|!a.isStatic && a.association==null && "java.lang.String"!=a.type.fqName() && !isEnum(a.type) && VisibilityName(a) != "private")»
+	«EXPAND fieldObjectDefinition(clazz) FOREACH AllAttributes().typeSelect(uml::Property).select(a|!a.isStatic && (("java.lang.String"==a.type.fqName())||(a.association!=null && a.getUpper()==1) && !isEnum(a.type)) && VisibilityName(a) != "private" )»
+	«EXPAND fieldObjectDefinition(clazz) FOREACH AllAttributes().typeSelect(uml::Property).select(a|!a.isStatic && isEnum(a.type) && VisibilityName(a) != "private")»
+	«EXPAND fieldCollectionDefinition(clazz) FOREACH AllAttributes().typeSelect(uml::Property).select(a|a.getUpper()==-1 && VisibilityName(a) != "private")»
+	INITIAL_SIZE=«getGlobalVar("end")»;
+	«removeGlobalVar("end")->""»
+	«counterReset("i")->""»
+	«counterReset("j")->""»
+«ENDDEFINE»
+
+«DEFINE fieldNullDefinitions(uml::Class clazz) FOR uml::Classifier»
+	«EXPAND fieldNullDefinition(clazz) FOREACH AllAttributes().typeSelect(uml::Property).select(a|!a.isStatic)»
+«ENDDEFINE»
+
+«DEFINE fieldDefinition(uml::Class clazz) FOR uml::Property»
+	«counterInc('i')->""»
+	«IF counterGet('i') == 1»
+		fieldOrder.add(new FieldMetaData<«clazz.name»Fields>(«clazz.name»Fields.«name.toUpperCase()», null, «storeGlobalVar("end", 0)»«storeGlobalVar("end", getGlobalVar("end") + findOffset(type.fqName()))->""», null, false));
+	«ELSE»
+		fieldOrder.add(new FieldMetaData<«clazz.name»Fields>(«clazz.name»Fields.«name.toUpperCase()», null, «getGlobalVar("end")»«storeGlobalVar("end", getGlobalVar("end") + findOffset(type.fqName()))->""», fieldOrder.get(«counterGet('i')-2»), false));
+	«ENDIF»	
+«ENDDEFINE»
+
+«DEFINE fieldNullDefinition(uml::Class clazz) FOR uml::Property»
+	«counterInc('i')->""»
+	«IF counterGet('i') == 1»
+		fieldOrder.add(new FieldMetaData<«clazz.name»Fields>(«clazz.name»Fields.NULL_«name.toUpperCase()», null, «storeGlobalVar("end", 0)»«storeGlobalVar("end", getGlobalVar("end") + 1)->""», null));
+	«ELSE»
+		fieldOrder.add(new FieldMetaData<«clazz.name»Fields>(«clazz.name»Fields.NULL_«name.toUpperCase()», null, «getGlobalVar("end")»«storeGlobalVar("end", getGlobalVar("end") + 1)->""», fieldOrder.get(«counterGet('i')-2»)));
+	«ENDIF»	
+«ENDDEFINE»
+
+«DEFINE fieldObjectDefinition(uml::Class clazz) FOR uml::Property»
+	«counterInc('i')->""»
+	«counterInc('j')->""»
+	«IF counterGet('i') == 1»
+		fieldOrder.add(new FieldMetaData<«clazz.name»Fields>(«clazz.name»Fields.«name.toUpperCase()», null, «storeGlobalVar("end", 0)», null, «IF "java.lang.String"==type.fqName()»false«ELSE»true«ENDIF»));
+		offsetMap.put(«clazz.name»Fields.«name.toUpperCase()», «getGlobalVar("end")»«storeGlobalVar("end", getGlobalVar("end") + findOffset(type.fqName()))->""»);
+	«ELSE»
+		«IF counterGet('j') == 1»
+			fieldOrder.add(new FieldMetaData<«clazz.name»Fields>(«clazz.name»Fields.«name.toUpperCase()», new ObjectOffsetStrategy<«clazz.name»Fields>(), «getGlobalVar("end")», fieldOrder.get(«counterGet('i')-2»), «IF "java.lang.String"==type.fqName()»false«ELSE»true«ENDIF»));
+			offsetMap.put(«clazz.name»Fields.«name.toUpperCase()», «getGlobalVar("end")»«storeGlobalVar("end", getGlobalVar("end") + findOffset(type.fqName()))->""»);
+		«ELSE»
+			fieldOrder.add(new FieldMetaData<«clazz.name»Fields>(«clazz.name»Fields.«name.toUpperCase()», new ObjectOffsetStrategy<«clazz.name»Fields>(), -1, fieldOrder.get(«counterGet('i')-2»), «IF "java.lang.String"==type.fqName()»false«ELSE»true«ENDIF»));
+			offsetMap.put(«clazz.name»Fields.«name.toUpperCase()», «getGlobalVar("end")»«storeGlobalVar("end", getGlobalVar("end") + findOffset(type.fqName()))->""»);
+		«ENDIF»	
+	«ENDIF»	
+«ENDDEFINE»
+
+«DEFINE fieldCollectionDefinition(uml::Class clazz) FOR uml::Property»
+	«counterInc('i')->""»
+	«counterInc('j')->""»
+	
+	«IF counterGet('i') == 1»
+		fieldOrder.add(new FieldMetaData<«clazz.name»Fields>(«clazz.name»Fields.«name.toUpperCase()», null, «storeGlobalVar("end", 0)», null, true));
+		offsetMap.put(«clazz.name»Fields.«name.toUpperCase()», «getGlobalVar("end")»«storeGlobalVar("end", getGlobalVar("end") + 4)->""»);
+	«ELSE»
+		«IF counterGet('j') == 1»
+			«IF getMapKey(this) != null»
+				fieldOrder.add(new FieldMetaData<«clazz.name»Fields>(«clazz.name»Fields.«name.toUpperCase()», new MapOffsetStrategy<«clazz.name»Fields>(), «getGlobalVar("end")», fieldOrder.get(«counterGet('i')-2»), true));
+			«ELSE»
+				fieldOrder.add(new FieldMetaData<«clazz.name»Fields>(«clazz.name»Fields.«name.toUpperCase()», new CollectionOffsetStrategy<«clazz.name»Fields>(), «getGlobalVar("end")», fieldOrder.get(«counterGet('i')-2»), true));
+			«ENDIF»			
+			offsetMap.put(«clazz.name»Fields.«name.toUpperCase()», «getGlobalVar("end")»«storeGlobalVar("end", getGlobalVar("end") + 4)->""»);
+		«ELSE»
+			«IF getMapKey(this) != null»
+				fieldOrder.add(new FieldMetaData<«clazz.name»Fields>(«clazz.name»Fields.«name.toUpperCase()», new MapOffsetStrategy<«clazz.name»Fields>(), -1, fieldOrder.get(«counterGet('i')-2»), true));
+			«ELSE»
+				fieldOrder.add(new FieldMetaData<«clazz.name»Fields>(«clazz.name»Fields.«name.toUpperCase()», new CollectionOffsetStrategy<«clazz.name»Fields>(), -1, fieldOrder.get(«counterGet('i')-2»), true));
+			«ENDIF»
+			offsetMap.put(«clazz.name»Fields.«name.toUpperCase()», «getGlobalVar("end")»«storeGlobalVar("end", getGlobalVar("end") + 4)->""»);
+		«ENDIF»	
+	«ENDIF»	
+«ENDDEFINE»
+
+«DEFINE attributeEnumeration FOR uml::Classifier»
+	«IF byteObjectNullImplementation()»
+		«FOREACH AllAttributes().typeSelect(uml::Property).select(a|((!a.isStatic && a.association==null) || a.getUpper()==-1)) && VisibilityName(a) != "private" AS attr SEPARATOR ','»
+			NULL_«attr.name.toUpperCase()»
+		«ENDFOREACH»,
+	«ENDIF»
+	«FOREACH AllAttributes().typeSelect(uml::Property).select(a|(!a.isStatic) && VisibilityName(a) != "private") AS attr SEPARATOR ','»
+		«attr.name.toUpperCase()»
+	«ENDFOREACH»
+«ENDDEFINE»
